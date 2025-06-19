@@ -5,3 +5,4 @@ langchain-chroma
 langchain-google-genai
 chromadb
 google-generativeai
+langchain-text-splitters
