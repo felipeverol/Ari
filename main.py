@@ -1,17 +1,18 @@
 # backend_rag/rag_service.py (Adicione este novo endpoint, mantenha o resto do código)
 
 import os
-import uuid
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Request
+from RAG import add_document
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Em produção, especifique o domínio do frontend
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,7 +29,7 @@ def root():
 LOCAL_PDF_STORAGE_DIR = "RAG/data"
 
 @app.post("/save-pdf")
-async def save_local_pdf(file: UploadFile = File(...)):
+async def save_pdf(file: UploadFile = File(...)):
     if not (file.filename.endswith(".pdf") or file.filename.endswith(".md")):
         raise HTTPException(status_code=400, detail="Apenas arquivos PDF ou Markdown são permitidos.")
 
@@ -52,5 +53,16 @@ async def save_local_pdf(file: UploadFile = File(...)):
         print(f"Erro ao salvar arquivo localmente: {e}")
         raise HTTPException(status_code=500, detail=f"Erro interno do servidor: {e}")
 
-# O resto dos seus endpoints, como /process-pdf e / (root), permanecem inalterados
-# ...
+@app.post("/process-pdf")
+async def process_pdf(request: Request):
+    data = await request.json()
+    file_path = data.get("file_path")
+    
+    if not file_path or not os.path.exists(file_path):
+        raise HTTPException(status_code=400, detail="Arquivo não encontrado.")
+    
+    try:    
+        add_document.add_document(file_path)
+    except Exception as e:
+        print(f"Erro ao processar arquivo localmente: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro interno do servidor: {e}")

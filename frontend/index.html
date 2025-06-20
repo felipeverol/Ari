@@ -95,6 +95,29 @@
                 "Arquivo salvo com sucesso na sua máquina: " +
                 (data.file_path || "");
               messageDisplay.style.color = "green";
+              try {
+                const response = await fetch(
+                  "http://localhost:8000/process-pdf",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ file_path: data.file_path }),
+                  }
+                );
+
+                if (response.ok) {
+                  messageDisplay.textContent =
+                    "Arquivo processado com sucesso na sua máquina: " +
+                    (data.file_path || "");
+                  messageDisplay.style.color = "green";
+                }
+              } catch (error) {
+                console.error("Erro na requisição:", error);
+                messageDisplay.textContent = "Erro de conexão ou rede.";
+                messageDisplay.style.color = "red";
+              }
             } else {
               messageDisplay.textContent =
                 "Erro ao salvar arquivo: " +

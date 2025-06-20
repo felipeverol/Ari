@@ -1,4 +1,4 @@
-from langchain_community.document_loaders import DirectoryLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
@@ -8,8 +8,8 @@ from uuid import uuid4
 DATA_PATH = "RAG/data"
 CHROMA_PATH = "RAG/chroma"
 
-def load_document():
-    loader = DirectoryLoader(DATA_PATH, glob="egito.md")
+def load_document(file_path):
+    loader = PyPDFLoader(file_path)
     documents = loader.load()
 
     return documents
@@ -29,7 +29,7 @@ def text_split(document):
     return chunks
 
 
-def add_document():
+def add_document(file_path):
     try:
         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         db = Chroma(
@@ -40,7 +40,7 @@ def add_document():
         print(f"Erro ao carregar o banco de dados: {e}")
         db = None
     
-    document = load_document()
+    document = load_document(file_path)
     chunks = text_split(document)
     documents = []
 
@@ -54,5 +54,3 @@ def add_document():
     uuids = [str(uuid4()) for _ in range(len(documents))]
     db.add_documents(documents=documents, ids=uuids)
     print("Sucessfully added document.")
-
-add_document()

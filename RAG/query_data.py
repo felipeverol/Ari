@@ -3,7 +3,8 @@ from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 
-CHROMA_PATH = "RAG/chroma"
+CHROMA_PATH = "./chroma"
+
 
 PROMPT_TEMPLATE = ChatPromptTemplate.from_messages(
     [
@@ -30,6 +31,8 @@ def query():
 
     results = db.similarity_search_with_relevance_scores(query_text, k=3)
         
+    print(results)
+
     for r in results:
         print(r[1])
 

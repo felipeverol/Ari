@@ -6,3 +6,6 @@ langchain-google-genai
 chromadb
 google-generativeai
 langchain-text-splitters
+pdfminer.six
+fastapi
+uvicorn
