@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Local de Apostila para Ari</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+        margin: 0;
+      }
+      .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      input[type="file"] {
+        margin-bottom: 20px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #message {
+        margin-top: 20px;
+        color: #333;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Salvar Apostila para Ari</h1>
+      <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="pdfFile" name="file" accept=".pdf,.md" />
+        <br /><br />
+        <button type="submit">Salvar</button>
+      </form>
+      <p id="message"></p>
+    </div>
+
+    <script>
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Impede o envio padrão do formulário
+
+          const fileInput = document.getElementById("pdfFile");
+          const messageDisplay = document.getElementById("message");
+
+          if (!fileInput.files.length) {
+            messageDisplay.textContent =
+              "Por favor, selecione um arquivo para upload.";
+            messageDisplay.style.color = "orange";
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("file", fileInput.files[0]);
+
+          messageDisplay.textContent = "Salvando arquivo localmente...";
+          messageDisplay.style.color = "#333";
+
+          try {
+            // A URL deve apontar para o seu backend RAG, que vai lidar com o salvamento local
+            // Se o seu backend RAG rodar na porta 8001 (como no docker-compose.yml anterior)
+            const response = await fetch("http://localhost:8000/save-pdf", {
+              method: "POST",
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              messageDisplay.textContent =
+                "Arquivo salvo com sucesso na sua máquina: " +
+                (data.file_path || "");
+              messageDisplay.style.color = "green";
+            } else {
+              messageDisplay.textContent =
+                "Erro ao salvar arquivo: " +
+                (data.detail || data.message || JSON.stringify(data));
+              messageDisplay.style.color = "red";
+            }
+          } catch (error) {
+            console.error("Erro na requisição:", error);
+            messageDisplay.textContent = "Erro de conexão ou rede.";
+            messageDisplay.style.color = "red";
+          }
+        });
+    </script>
+  </body>
+</html>
