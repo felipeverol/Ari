@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
-from RAG import add_document
+from RAG import add_document, query_data
 
 app = FastAPI()
 
@@ -24,7 +24,7 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 # Serve o index.html da pasta 'frontend' no root "/"
 @app.get("/", response_class=FileResponse)
 def root():
-    return FileResponse(os.path.join("frontend", "index.html"))
+    return FileResponse(os.path.join("frontend", "teste.html"))
 
 LOCAL_PDF_STORAGE_DIR = "RAG/data"
 
@@ -66,3 +66,16 @@ async def process_pdf(request: Request):
     except Exception as e:
         print(f"Erro ao processar arquivo localmente: {e}")
         raise HTTPException(status_code=500, detail=f"Erro interno do servidor: {e}")
+
+@app.post("/chat")
+async def chat(request: Request):
+    data = await request.json()
+    query_text = data.get("query")
+    if not query_text:
+        raise HTTPException(status_code=400, detail="Query não fornecida.")
+    try:
+        response = query_data.query(query_text)
+        return {"response": response}
+    except Exception as e:
+        print(f"Erro no chat: {e}")
+        raise HTTPException(status_code=500, detail="Erro interno do servidor.")
