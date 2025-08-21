@@ -77,4 +77,4 @@ See all in [`requirements.txt`](requirements.txt), but the main ones are:
 
 ---
 
-Made with ❤️ for educational exploration, study, and interactive learning with local RAG and generative AI.
+For educational exploration, study, and interactive learning with RAG and generative AI.
