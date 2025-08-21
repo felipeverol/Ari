@@ -24,7 +24,7 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 # Serve o index.html da pasta 'frontend' no root "/"
 @app.get("/", response_class=FileResponse)
 def root():
-    return FileResponse(os.path.join("frontend", "teste.html"))
+    return FileResponse(os.path.join("frontend", "index.html"))
 
 LOCAL_PDF_STORAGE_DIR = "RAG/data"
 

@@ -16,11 +16,11 @@ def load_document(file_path):
 
 def text_split(document):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=600,
-        chunk_overlap=300,
+        chunk_size=800,
+        chunk_overlap=100,
         length_function=len,
         add_start_index=True,
-        separators=["\n\n", "\n", " ", "##"]
+        separators = ["\n\n", "\n", " ", ""]
     )
 
     chunks = text_splitter.split_documents(document)
