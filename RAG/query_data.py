@@ -4,8 +4,6 @@ from langchain_google_genai import GoogleGenerativeAI, GoogleGenerativeAIEmbeddi
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 
 CHROMA_PATH = "RAG/chroma"
-
-
 PROMPT_TEMPLATE = ChatPromptTemplate.from_messages(
     [
         (
@@ -16,6 +14,7 @@ PROMPT_TEMPLATE = ChatPromptTemplate.from_messages(
         ("human", "{query}"),
     ]
 )
+
 def query(query_text):
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     db = Chroma(
