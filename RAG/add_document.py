@@ -25,14 +25,6 @@ def text_split(document):
 
     chunks = text_splitter.split_documents(document)
 
-    for i, c in enumerate(chunks[:2]):
-        print("="*40)
-        print(f"📑 Chunk {i} (página {c.metadata.get('page')})")
-        print(c.page_content[:500])  # só os 500 primeiros chars
-        print()
-
-    print(f"Total chunks: {len(chunks)}")
-
     return chunks
 
 
