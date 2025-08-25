@@ -1,24 +1,34 @@
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import MarkdownTextSplitter
+from langchain_experimental.text_splitter import SemanticChunker
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from uuid import uuid4
-import pymupdf4llm
+from RAG import agentic_chunker as ac
 
 CHROMA_PATH = "RAG/chroma"
-    
-def load_and_text_split(file_path):
-    md_text = pymupdf4llm.to_markdown(file_path)
+embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
-    splitter = MarkdownTextSplitter(chunk_size=400, chunk_overlap=100)
-    chunks = splitter.create_documents([md_text])
+def load_and_split(file_path):
+    loader = PyPDFLoader(file_path)
+    docs = loader.load()
+    
+    text_splitter = SemanticChunker(
+        embeddings=embeddings,
+        breakpoint_threshold_type="gradient"
+    )
+    
+    chunks = text_splitter.split_documents(docs)
+
+    chunker = ac.AgenticChunker()
+    chunker.add_propositions(chunks)
+    chunker.pretty_print_chunks()
+    chunker.pretty_print_chunk_outline()
 
     return chunks
 
 def add_document(file_path):
     try:
-        embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
         db = Chroma(
             persist_directory=CHROMA_PATH, 
             embedding_function=embeddings
@@ -27,7 +37,7 @@ def add_document(file_path):
         print(f"Erro ao carregar o banco de dados: {e}")
         db = None
     
-    chunks = load_and_text_split(file_path)
+    chunks = load_and_split(file_path)
 
     for i, c in enumerate(chunks):
         print(f"\nChunk {i}: {c.page_content}")

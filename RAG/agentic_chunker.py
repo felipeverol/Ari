@@ -1,14 +1,16 @@
 from langchain_core.prompts import ChatPromptTemplate
 import uuid
 from langchain_google_genai import GoogleGenerativeAI
+import os
 from typing import Optional
 from langchain_core.pydantic_v1 import BaseModel
 from langchain.chains import create_extraction_chain_pydantic
 from dotenv import load_dotenv
-from rich import print
+
+load_dotenv()
 
 class AgenticChunker:
-    def __init__(self, openai_api_key=None):
+    def __init__(self):
         self.chunks = {}
         self.id_truncate_limit = 5
 
@@ -16,7 +18,7 @@ class AgenticChunker:
         self.generate_new_metadata_ind = True
         self.print_logging = True
 
-        self.llm = GoogleGenerativeAI(model="gemini-2.5-flash")
+        self.llm = GoogleGenerativeAI(model='gemini-2.5-flash')
 
     def add_propositions(self, propositions):
         for proposition in propositions:
@@ -92,7 +94,7 @@ class AgenticChunker:
         new_chunk_summary = runnable.invoke({
             "proposition": "\n".join(chunk['propositions']),
             "current_summary" : chunk['summary']
-        }).content
+        })
 
         return new_chunk_summary
     
@@ -132,7 +134,7 @@ class AgenticChunker:
             "proposition": "\n".join(chunk['propositions']),
             "current_summary" : chunk['summary'],
             "current_title" : chunk['title']
-        }).content
+        })
 
         return updated_chunk_title
 
@@ -167,7 +169,7 @@ class AgenticChunker:
 
         new_chunk_summary = runnable.invoke({
             "proposition": proposition
-        }).content
+        })
 
         return new_chunk_summary
     
@@ -202,7 +204,7 @@ class AgenticChunker:
 
         new_chunk_title = runnable.invoke({
             "summary": summary
-        }).content
+        })
 
         return new_chunk_title
 
@@ -230,7 +232,7 @@ class AgenticChunker:
         chunk_outline = ""
 
         for chunk_id, chunk in self.chunks.items():
-            single_chunk_string = f"""Chunk ({chunk['chunk_id']}): {chunk['title']}\nSummary: {chunk['summary']}\n\n"""
+            single_chunk_string = f"""Chunk ID: {chunk['chunk_id']}\nChunk Name: {chunk['title']}\nChunk Summary: {chunk['summary']}\n\n"""
         
             chunk_outline += single_chunk_string
         
@@ -276,7 +278,7 @@ class AgenticChunker:
         chunk_found = runnable.invoke({
             "proposition": proposition,
             "current_chunk_outline": current_chunk_outline
-        }).content
+        })
 
         # Pydantic data class
         class ChunkID(BaseModel):
@@ -285,7 +287,7 @@ class AgenticChunker:
             
         # Extraction to catch-all LLM responses. This is a bandaid
         extraction_chain = create_extraction_chain_pydantic(pydantic_schema=ChunkID, llm=self.llm)
-        extraction_found = extraction_chain.invoke(chunk_found)["text"]
+        extraction_found = extraction_chain.run(chunk_found)
         if extraction_found:
             chunk_found = extraction_found[0].chunk_id
 
@@ -324,3 +326,36 @@ class AgenticChunker:
     def pretty_print_chunk_outline(self):
         print ("Chunk Outline\n")
         print(self.get_chunk_outline())
+
+if __name__ == "__main__":
+    ac = AgenticChunker()
+
+    ## Comment and uncomment the propositions to your hearts content
+    propositions = [
+        'The month is October.',
+        'The year is 2023.',
+        "One of the most important things that I didn't understand about the world as a child was the degree to which the returns for performance are superlinear.",
+        'Teachers and coaches implicitly told us that the returns were linear.',
+        "I heard a thousand times that 'You get out what you put in.'",
+        # 'Teachers and coaches meant well.',
+        # "The statement that 'You get out what you put in' is rarely true.",
+        # "If your product is only half as good as your competitor's product, you do not get half as many customers.",
+        # "You get no customers if your product is only half as good as your competitor's product.",
+        # 'You go out of business if you get no customers.',
+        # 'The returns for performance are superlinear in business.',
+        # 'Some people think the superlinear returns for performance are a flaw of capitalism.',
+        # 'Some people think that changing the rules of capitalism would stop the superlinear returns for performance from being true.',
+        # 'Superlinear returns for performance are a feature of the world.',
+        # 'Superlinear returns for performance are not an artifact of rules that humans have invented.',
+        # 'The same pattern of superlinear returns is observed in fame.',
+        # 'The same pattern of superlinear returns is observed in power.',
+        # 'The same pattern of superlinear returns is observed in military victories.',
+        # 'The same pattern of superlinear returns is observed in knowledge.',
+        # 'The same pattern of superlinear returns is observed in benefit to humanity.',
+        # 'In fame, power, military victories, knowledge, and benefit to humanity, the rich get richer.'
+    ]
+    
+    ac.add_propositions(propositions)
+    ac.pretty_print_chunks()
+    ac.pretty_print_chunk_outline()
+    print (ac.get_chunks(get_type='list_of_strings'))
