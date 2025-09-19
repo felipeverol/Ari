@@ -14,16 +14,22 @@ Ari is a RAG (Retrieval-Augmented Generation) system designed for educational pu
 
 ```
 Ari/
-├── main.py                # Backend FastAPI (upload, processing, and chat endpoints)
-├── requirements.txt       # Project dependencies
-├── frontend/
-│   └── index.html         # Web interface for uploading files and chat
-└── RAG/
-    ├── add_document.py    # Functions to load and index educational documents
-    ├── create_db.py       # Script to create the ChromaDB database
-    ├── query_data.py      # Function to query the vector database
-    ├── data/              # Folder where uploaded files are saved
-    └── chroma/            # ChromaDB vector database
+├── backend/
+│   ├── app/
+│   │   └── main.py                     # Backend FastAPI (upload, processing, and chat endpoints)
+│   ├── utils/
+|   |   ├── database/
+|   |   |   ├── create_database.sql     # DDL functions to create database
+|   |   |   └── relational_model.png    # Picture of the relational model used
+│   │   └── RAG/
+|   |       ├── chroma/                 # ChromaDB vector database
+|   |       ├── data/                   # Folder where uploaded files are saved
+│   │       ├── add_document.py         # Functions to load and index educational documents
+|   |       ├── create_db.py            # Script to create the ChromaDB database
+|   |       └── query_data.py           # Function to query the vector database
+│   └── requirements.txt                # Project dependencies
+└── frontend/
+    └── index.html                      # Web interface for uploading files and chat
 ```
 
 ## How to use it
@@ -35,7 +41,9 @@ In the project directory:
 ```sh
 python -m venv venv
 source venv/bin/activate
+cd backend
 pip install -r requirements.txt
+cd ..
 ```
 
 ### 2. Set up the Google Gemini API Key
@@ -51,7 +59,7 @@ To avoid having to export every time, add it to your `~/.bashrc` or `~/.zshrc`.
 ### 3. Run the backend
 
 ```sh
-uvicorn main:app --reload
+uvicorn backend.app.main:app --reload
 ```
 
 Open [http://localhost:8000/](http://localhost:8000/) in the web browser.
