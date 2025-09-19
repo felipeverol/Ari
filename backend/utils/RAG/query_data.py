@@ -3,7 +3,7 @@ from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 
-CHROMA_PATH = "RAG/chroma"
+CHROMA_PATH = "backend/utils/RAG/chroma"
 
 
 PROMPT_TEMPLATE = ChatPromptTemplate.from_messages(

@@ -26,7 +26,7 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 def root():
     return FileResponse(os.path.join("frontend", "index.html"))
 
-LOCAL_PDF_STORAGE_DIR = "RAG/data"
+LOCAL_PDF_STORAGE_DIR = "backend/utils/RAG/data"
 
 @app.post("/save-pdf")
 async def save_pdf(file: UploadFile = File(...)):

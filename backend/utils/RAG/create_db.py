@@ -2,8 +2,8 @@ from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import os, shutil
 
-DATA_PATH = "RAG/data"
-CHROMA_PATH = "RAG/chroma"
+DATA_PATH = "backend/utils/RAG/data"
+CHROMA_PATH = "backend/utils/RAG/chroma"
 
 def create_database():
     if os.path.exists(CHROMA_PATH):

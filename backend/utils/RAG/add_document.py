@@ -5,8 +5,8 @@ from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from uuid import uuid4
 
-DATA_PATH = "RAG/data"
-CHROMA_PATH = "RAG/chroma"
+DATA_PATH = "backend/utils/RAG/data"
+CHROMA_PATH = "backend/utils/RAG/chroma"
 
 def load_document(file_path):
     loader = PyPDFLoader(file_path)
