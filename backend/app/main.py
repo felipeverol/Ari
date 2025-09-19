@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
-from RAG import add_document, query_data
+from backend.utils.RAG import add_document, query_data
 
 app = FastAPI()
 
