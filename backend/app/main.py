@@ -1,10 +1,15 @@
 import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
 from backend.utils.RAG import add_document, query_data
+
+# Carrega variáveis de ambiente do arquivo .env
+load_dotenv() 
+os.getenv("GOOGLE_API_KEY")
 
 app = FastAPI()
 

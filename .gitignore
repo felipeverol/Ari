@@ -6,3 +6,6 @@ venv
 
 # Arquivo de pasta macOS
 .DS_Store
+
+# Arquivo de variáveis de ambiente
+.env
