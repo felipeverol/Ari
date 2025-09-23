@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
 from backend.utils.RAG import add_document, query_data
+from backend.utils.validators import validators
 
 app = FastAPI()
 
@@ -32,6 +33,7 @@ def root():
     """
     return FileResponse(os.path.join("frontend", "index.html"))
 
+
 @app.post("/save-pdf", tags=["Materiais"])
 async def save_pdf(file: UploadFile = File(...)):
     """
@@ -44,22 +46,28 @@ async def save_pdf(file: UploadFile = File(...)):
 
     - **Respostas**:
         - `200 OK`: Arquivo salvo com sucesso
-        - `400 Bad Request`: Tipo de arquivo não permitido
+        - `400 Bad Request`: Arquivo inexistente | Tipo de arquivo não permitido
         - `500 Internal Server Error`: Erro interno ao salvar
 
     - **Exemplo de resposta**:
     ```json
     {
       "message": "Arquivo salvo localmente com sucesso!",
-      "file_path": "backend/utils/RAG/data/exemplo.pdf"
+      "file_path": "backend/utils/RAG/data/exemplo.pdf",
+      "created_data_directory": False (se backend/utils/data existir) | True (se backend/utils/data não existir)
     }
     ```
     """
-    if not file.filename.endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Apenas arquivos PDF ou Markdown são permitidos.")
+    if not file:
+        raise HTTPException(status_code=400, detail="Adicione um arquivo.")
 
+    if not (file.filename.endswith(".pdf") or file.filename.endswith(".md")):
+        raise HTTPException(status_code=400, detail="Apenas arquivos PDF ou Markdown são permitidos.")
+    
+    created_data_directory = False
     if not os.path.exists(LOCAL_PDF_STORAGE_DIR):
         os.makedirs(LOCAL_PDF_STORAGE_DIR)
+        created_data_directory = True
         print(f"Diretório '{LOCAL_PDF_STORAGE_DIR}' criado.")
 
     file_path = os.path.join(LOCAL_PDF_STORAGE_DIR, file.filename)
@@ -70,11 +78,13 @@ async def save_pdf(file: UploadFile = File(...)):
         print(f"Arquivo '{file.filename}' salvo localmente em: {file_path}")
         return JSONResponse(status_code=200, content={
             "message": "Arquivo salvo localmente com sucesso!",
-            "file_path": file_path
+            "file_path": file_path,
+            "created_data_directory": created_data_directory
         })
     except Exception as e:
         print(f"Erro ao salvar arquivo localmente: {e}")
         raise HTTPException(status_code=500, detail=f"Erro interno do servidor: {e}")
+
 
 @app.post("/process-pdf", tags=["Materiais"])
 async def process_pdf(request: Request):
@@ -106,10 +116,13 @@ async def process_pdf(request: Request):
     
     try:    
         add_document.add_document(file_path)
-        return {"message": "Documento processado com sucesso!"}
+        return JSONResponse(status_code=200, content={
+            "message": "Documento processado com sucesso!",
+        })
     except Exception as e:
         print(f"Erro ao processar arquivo localmente: {e}")
         raise HTTPException(status_code=500, detail=f"Erro interno do servidor: {e}")
+
 
 @app.post("/chat", tags=["Chat"])
 async def chat(request: Request):
@@ -130,7 +143,7 @@ async def chat(request: Request):
     - **Exemplo de resposta**:
     ```json
     {
-      "response": "Aqui está a resposta encontrada nos materiais."
+      "response": Resposta encontrada pelo RAG
     }
     ```
     """
@@ -140,7 +153,9 @@ async def chat(request: Request):
         raise HTTPException(status_code=400, detail="Query não fornecida.")
     try:
         response = query_data.query(query_text)
-        return {"response": response}
+        return JSONResponse(status_code=200, content={
+            "response": response,
+        })
     except Exception as e:
         print(f"Erro no chat: {e}")
         raise HTTPException(status_code=500, detail="Erro interno do servidor.")

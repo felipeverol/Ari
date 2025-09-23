@@ -6,3 +6,9 @@ venv
 
 # Arquivo de pasta macOS
 .DS_Store
+
+# Configurações do VSCode
+.vscode/
+
+# Variáveis de ambiente
+**/.env
