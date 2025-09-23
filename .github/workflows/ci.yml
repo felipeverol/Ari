@@ -1,0 +1,45 @@
+name: CI Backend
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "fix/**"
+      - "docs/**"
+      - "style/**"
+      - "ci/**"
+      - "chore/**"
+      - "build/**"
+      - "perf/**"
+  pull_request:
+    branches:
+      - main
+      - "feat/**"
+      - "fix/**"
+      - "ci/**"
+
+jobs:
+  build-and-test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: 1. Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: 2. Configuração do Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.11"
+
+      - name: 3. Etapa de Build
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: 4. Etapa de Teste
+        run: |
+          pytest
