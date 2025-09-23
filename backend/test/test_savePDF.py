@@ -53,7 +53,6 @@ def test_save_pdf_to_non_existing_path():
                 }
         )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Arquivo salvo localmente com sucesso!"
@@ -75,7 +74,6 @@ def test_save_md_to_non_existing_path():
                 }
         )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Arquivo salvo localmente com sucesso!"
@@ -98,7 +96,6 @@ def test_save_pdf_to_empty_directory():
                 }
         )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Arquivo salvo localmente com sucesso!"
@@ -120,7 +117,6 @@ def test_save_md_to_empty_directory():
                 }
         )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Arquivo salvo localmente com sucesso!"
@@ -141,7 +137,6 @@ def test_save_pdf_to_non_empty_directory():
                 }
         )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Arquivo salvo localmente com sucesso!"
@@ -161,7 +156,6 @@ def test_save_md_to_non_empty_directory():
                 }
         )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Arquivo salvo localmente com sucesso!"

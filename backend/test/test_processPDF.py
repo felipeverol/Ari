@@ -64,7 +64,6 @@ def test_process_pdf():
             }
     )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Documento processado com sucesso!"
@@ -80,7 +79,6 @@ def test_process_md():
             }
     )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Documento processado com sucesso!"
@@ -97,7 +95,6 @@ def test_process_non_existing_file():
             }
     )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 400
     data = response.json()
     assert data["detail"] == "Arquivo não encontrado."
@@ -113,7 +110,6 @@ def test_process_none_file():
             }
     )
 
-    # Verifica se os campos correspondem ao informado
     assert response.status_code == 400
     data = response.json()
     assert data["detail"] == "Arquivo não encontrado."

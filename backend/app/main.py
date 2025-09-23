@@ -143,7 +143,7 @@ async def chat(request: Request):
     - **Exemplo de resposta**:
     ```json
     {
-      "response": "Aqui está a resposta encontrada nos materiais."
+      "response": Resposta encontrada pelo RAG
     }
     ```
     """
@@ -153,7 +153,9 @@ async def chat(request: Request):
         raise HTTPException(status_code=400, detail="Query não fornecida.")
     try:
         response = query_data.query(query_text)
-        return {"response": response}
+        return JSONResponse(status_code=200, content={
+            "response": response,
+        })
     except Exception as e:
         print(f"Erro no chat: {e}")
         raise HTTPException(status_code=500, detail="Erro interno do servidor.")
