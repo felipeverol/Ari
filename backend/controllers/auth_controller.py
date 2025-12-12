@@ -6,9 +6,7 @@ class AuthController:
     @staticmethod
     def signup(data):
         try:
-            result = AuthService.signup(data.email, data.password)
-            return result
-
+            return AuthService.signup(data.email, data.password)
         except Exception as e:
             raise HTTPException(status_code=400, detail=str(e))
 

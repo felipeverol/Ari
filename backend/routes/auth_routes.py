@@ -9,5 +9,5 @@ def signup(data: SignUpRequest):
     return AuthController.signup(data)
 
 @router.post("/login")
-def login_route(body: LoginRequest):
+def login(body: LoginRequest):
     return AuthController.login(body)
