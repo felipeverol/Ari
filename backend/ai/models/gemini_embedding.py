@@ -1,5 +1,5 @@
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from utils.ai.base_embedding import BaseEmbeddingModel
+from ai.base.base_embedding import BaseEmbeddingModel
 
 class GeminiEmbeddingModel(BaseEmbeddingModel):
     def __init__(self):

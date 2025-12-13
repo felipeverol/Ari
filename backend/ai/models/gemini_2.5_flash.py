@@ -1,5 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-from utils.ai.base_llm import BaseLLM
+from ai.base.base_llm import BaseLLM
 
 class Gemini25Flash(BaseLLM):
     def __init__(self):

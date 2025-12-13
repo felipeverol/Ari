@@ -1,4 +1,4 @@
-from utils.ai.gemini_embedding import GeminiEmbeddingModel
+from ai.models.gemini_embedding import GeminiEmbeddingModel
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from fastapi import UploadFile
 import fitz
