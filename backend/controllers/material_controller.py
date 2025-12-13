@@ -9,7 +9,6 @@ class MaterialController:
         try:
             return await MaterialService.upload_material(
                 file=file,
-                school_id=data.school_id,
                 class_id=data.class_id,
                 title=data.title
             )

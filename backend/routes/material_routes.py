@@ -1,20 +1,16 @@
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, Depends, Form
 from models.material_models import UploadMaterialRequest
 from controllers.material_controller import MaterialController
+from dependencies.permissions import require_teacher_in_class
 
-router = APIRouter()
+router = APIRouter(tags=["materials"])
 
 @router.post("/upload")
 async def upload_material(
-    file: UploadFile = File(...),
-    school_id: str = Form(...),
+    file: UploadFile, 
     class_id: str = Form(...),
-    title: str = Form(...)
+    title: str = Form(...),
+    _ = Depends(require_teacher_in_class),
 ):
-    data = UploadMaterialRequest(
-        school_id=school_id,
-        class_id=class_id,
-        title=title
-    )
-
+    data = UploadMaterialRequest(class_id=class_id, title=title)
     return await MaterialController.upload_material(file, data)
