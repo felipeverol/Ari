@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException, Form
 from dependencies.auth import get_current_user
 from supabase_client import supabase
+from models.profile_models import ProfileRole
 
 def get_user_role(user_id: str) -> str:
     profile = (
@@ -18,16 +19,16 @@ def get_user_role(user_id: str) -> str:
 
     return profile["role"]
 
-def require_role(required_role: str):
+def require_role(required_role: ProfileRole):
     
     def role_checker(user = Depends(get_current_user)):
         
-        current_role = get_user_role(user.id) 
+        current_role = get_user_role(user.id)
 
-        if current_role != required_role:
+        if current_role != required_role.value:
             raise HTTPException(
                 status_code=403, 
-                detail=f"Acesso negado. Apenas usuários com a função '{required_role}' podem acessar este recurso."
+                detail=f"Acesso negado. Apenas usuários com a função '{required_role.value}' podem acessar este recurso."
             )
         
         return user 
@@ -35,7 +36,7 @@ def require_role(required_role: str):
 
 def require_teacher_in_class(
     class_id: str = Form(...),
-    user = Depends(require_role("teacher")),
+    user = Depends(require_role(ProfileRole.TEACHER)),
 ):
     result = (
         supabase
