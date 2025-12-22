@@ -7,9 +7,15 @@ class SchoolController:
     @staticmethod
     def create_school(data: CreateSchoolRequest):
         try:
-            return SchoolService.create_school(data.name, data.address)
+            return SchoolService.create_school(
+                name=data.name,
+                address=data.address
+            )
         except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(
+                status_code=400,
+                detail=str(e)
+            )
         
 
     

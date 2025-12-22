@@ -1,19 +1,31 @@
 from fastapi import HTTPException
 from services.auth_service import AuthService
-from models.auth_models import LoginRequest, SignUpRequest
+from models.auth_models import AuthRequest
 
 class AuthController:
     
     @staticmethod
-    def signup(data: SignUpRequest):
+    def signup(data: AuthRequest):
         try:
-            return AuthService.signup(data.email, data.password)
+            return AuthService.signup(
+                email=data.email,
+                password=data.password
+            )
         except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(
+                status_code=400,
+                detail=str(e)
+            )
 
     @staticmethod
-    def login(data: LoginRequest):
+    def login(data: AuthRequest):
         try:
-            return AuthService.login(data.email, data.password)
+            return AuthService.login(
+                email=data.email,
+                password=data.password
+            )
         except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(
+                status_code=400,
+                detail=str(e)
+            )

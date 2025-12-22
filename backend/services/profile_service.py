@@ -5,8 +5,12 @@ from typing import List
 class ProfileService:
     
     @staticmethod
-    def create_profile(user_id: str, name: str, role: ProfileRole, class_ids: List[str]):
-        
+    def create_profile(
+        user_id: str,
+        name: str,
+        role: ProfileRole,
+        class_ids: List[str]
+    ):
         supabase.table("profile").insert({
             "id": user_id,
             "name": name,

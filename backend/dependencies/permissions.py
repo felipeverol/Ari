@@ -3,7 +3,7 @@ from dependencies.auth import get_current_user
 from supabase_client import supabase
 from models.profile_models import ProfileRole
 
-def get_user_role(user_id: str) -> str:
+def get_user_role(user_id: str) -> ProfileRole:
     profile = (
         supabase
         .table("profile")
@@ -15,7 +15,10 @@ def get_user_role(user_id: str) -> str:
     )
     
     if not profile:
-        raise HTTPException(404, "Perfil do usuário não encontrado.")
+        raise HTTPException(
+            status_code=404,
+            detail="Perfil do usuário não encontrado."
+        )
 
     return profile["role"]
 
@@ -25,7 +28,7 @@ def require_role(required_role: ProfileRole):
         
         current_role = get_user_role(user.id)
 
-        if current_role != required_role.value:
+        if current_role != required_role:
             raise HTTPException(
                 status_code=403, 
                 detail=f"Acesso negado. Apenas usuários com a função '{required_role.value}' podem acessar este recurso."
@@ -48,6 +51,9 @@ def require_teacher_in_class(
     )
 
     if not result.data:
-        raise HTTPException(403, "Você não é professor desta turma")
+        raise HTTPException(
+            status_code=403,
+            detail="Você não é professor desta turma"
+        )
 
     return user

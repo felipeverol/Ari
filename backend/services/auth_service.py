@@ -3,7 +3,10 @@ from supabase_client import supabase
 class AuthService:
 
     @staticmethod
-    def signup(email: str, password: str):
+    def signup(
+        email: str,
+        password: str
+    ):
         try:
             response = supabase.auth.sign_up({
                 "email": email,
@@ -21,7 +24,10 @@ class AuthService:
             raise Exception(str(e))
 
     @staticmethod
-    def login(email: str, password: str):
+    def login(
+        email: str,
+        password: str
+    ):
         try:
             response = supabase.auth.sign_in_with_password({
                 "email": email,

@@ -9,10 +9,15 @@ from supabase_client import supabase
 class MaterialService:
 
     @staticmethod
-    async def upload_material(file: UploadFile, class_id: str, title: str):
+    async def upload_material(
+        file: UploadFile,
+        class_id: str,
+        title: str
+    ):
         try:
             file_content = await file.read()
 
+            # TODO: modularizar, colocar no school_service
             # 1) Get school_id from class_id
             class_data = (
                 supabase
@@ -30,12 +35,12 @@ class MaterialService:
             school_id = class_data["school_id"]
 
             # 2) Upload file to Supabase Storage
-            file_id = str(uuid.uuid4())
+            file_id = str(uuid.uuid4()) # TODO: aqui talvez seria melhor colocar uuid do supabase ?
             storage_path = f"/{school_id}/{class_id}/{file_id}_{file.filename}"
 
             supabase.storage.from_("materials").upload(
-                storage_path,
-                file_content,
+                path=storage_path,
+                file=file_content,
                 file_options={"content-type": file.content_type}
             )
 
@@ -68,7 +73,10 @@ class MaterialService:
     async def process_material(file_content: bytes, material_id: str):
 
         # 1) Extract text from PDF
-        doc = fitz.open(stream=file_content, filetype="pdf")
+        doc = fitz.open(
+            stream=file_content,
+            filetype="pdf"
+        )
         full_text = ""
         for page in doc:
             full_text += page.get_text("text") + "\n"
