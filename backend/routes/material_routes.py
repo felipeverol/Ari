@@ -12,5 +12,8 @@ async def upload_material(
     title: str = Form(...),
     _ = Depends(require_teacher_in_class),
 ):
-    data = UploadMaterialRequest(class_id=class_id, title=title)
+    data = UploadMaterialRequest(
+        class_id=class_id,
+        title=title
+    )
     return await MaterialController.upload_material(file, data)

@@ -7,6 +7,13 @@ class ClassController:
     @staticmethod
     def create_class(data: CreateClassRequest):
         try:
-            return ClassService.create_class(data.school_id, data.name, data.description)
+            return ClassService.create_class(
+                school_id=data.school_id,
+                name=data.name,
+                description=data.description
+            )
         except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(
+                status_code=400,
+                detail=str(e)
+            )
