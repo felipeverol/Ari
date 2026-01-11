@@ -11,7 +11,7 @@ async def upload_material(
     file: UploadFile, 
     class_id: str = Form(...),
     title: str = Form(...),
-    _ = Depends(require_role(ProfileRole.ADMIN)), # TODO: MUDAR DEPOIS PARA REQUIRE_TEACHER_IN_CLASS
+    _ = Depends(require_teacher_in_class), 
 ):
     data = UploadMaterialRequest(
         class_id=class_id,
