@@ -1,7 +1,8 @@
 from fastapi import APIRouter, UploadFile, Depends, Form
 from models.material_models import UploadMaterialRequest
 from controllers.material_controller import MaterialController
-from dependencies.permissions import require_teacher_in_class
+from dependencies.permissions import require_teacher_in_class, require_role
+from models.profile_models import ProfileRole
 
 router = APIRouter(tags=["materials"])
 
@@ -10,7 +11,7 @@ async def upload_material(
     file: UploadFile, 
     class_id: str = Form(...),
     title: str = Form(...),
-    _ = Depends(require_teacher_in_class),
+    _ = Depends(require_role(ProfileRole.ADMIN)), # TODO: MUDAR DEPOIS PARA REQUIRE_TEACHER_IN_CLASS
 ):
     data = UploadMaterialRequest(
         class_id=class_id,
