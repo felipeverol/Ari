@@ -8,7 +8,6 @@ from ai.graph.nodes import (
 )
 from ai.graph.conditions import grade_documents
 from ai.tools.retriever import retrieve
-from ai.tools.multi_retriever import multi_retrieve
 
 
 def build_graph():
@@ -18,7 +17,7 @@ def build_graph():
     workflow.add_node(generate_query_or_respond)
     workflow.add_node(
         "retrieval_tools",
-        ToolNode([retrieve, multi_retrieve]),
+        ToolNode([retrieve]),
     )
     workflow.add_node(rewrite_question)
     workflow.add_node(generate_answer)
