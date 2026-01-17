@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
+from typing import Literal
 
 class GradeDocuments(BaseModel):
-    binary_grade: str = Field(
-        description="Relevance score: 'yes' if relevant, or 'no' if not relevant"
+    binary_grade: Literal["yes", "no"] = Field(
+        description="Pontuação de relevância: 'yes' se relevante, ou 'no' se não relevante"
     )

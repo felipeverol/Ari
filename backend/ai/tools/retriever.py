@@ -9,8 +9,16 @@ from ai.models.models import gemini_embedding_model
 
 
 @tool(response_format="content_and_artifact")
-def retrieve(query: str, config: Annotated[RunnableConfig, InjectedToolArg]):
-    """Retrieve information related to a query."""
+def retrieve(
+    query: str, 
+    config: Annotated[RunnableConfig, InjectedToolArg]
+):
+    """
+    Retrieve relevant documents for a single, well-defined query.
+    Use this tool when the user's question can be answered with one retrieval step,
+    without breaking the question into sub-queries or reasoning across multiple documents.
+    """
+
 
     class_id = config.get("configurable", {}).get("class_id")
 

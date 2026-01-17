@@ -1,11 +1,12 @@
 from langchain.messages import HumanMessage
 from ai.models.models import gemini_25_flash
 from ai.tools.retriever import retrieve
+from ai.tools.multi_retriever import multi_retrieve
 from ai.prompts.rewrite import REWRITE_PROMPT
 from ai.prompts.generate import GENERATE_PROMPT
 
 def generate_query_or_respond(state):
-    response = gemini_25_flash.bind_tools([retrieve]).invoke(state["messages"])
+    response = gemini_25_flash.bind_tools([retrieve, multi_retrieve]).invoke(state["messages"])
     return {"messages": [response]}
 
 def rewrite_question(state):

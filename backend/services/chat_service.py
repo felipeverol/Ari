@@ -17,12 +17,13 @@ class ChatService:
             config=config
         )
 
-        return result
+        for m in result["messages"]:
+            m.pretty_print()
+            
+        last_message = result["messages"][-1]
+        content = last_message.content
+        
+        if isinstance(content, list):
+            return content[-1]["text"]
 
-        messages = result.get("messages", [])
-
-        for msg in reversed(messages):
-            if isinstance(msg, AIMessage) and not msg.tool_calls:
-                return msg.content
-
-        raise ValueError("Nenhuma resposta final encontrada.")
+        return content
