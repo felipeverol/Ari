@@ -57,3 +57,24 @@ def require_teacher_in_class(
         )
 
     return user
+
+def require_student_in_class(
+    class_id: str = Form(...),
+    user = Depends(require_role(ProfileRole.STUDENT)),
+):
+    result = (
+        supabase
+        .table("student_class")
+        .select("class_id")
+        .eq("class_id", class_id)
+        .eq("student_id", user.id)
+        .execute()
+    )
+
+    if not result.data:
+        raise HTTPException(
+            status_code=403,
+            detail="Você não é aluno desta turma"
+        )
+
+    return user

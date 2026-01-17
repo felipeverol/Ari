@@ -6,7 +6,7 @@ from models.profile_models import ProfileRole
 
 router = APIRouter(tags=["class"])
 
-@router.post("/class")
+@router.post("/create-class")
 def create_class(
     data: CreateClassRequest,
     _ = Depends(require_role(ProfileRole.ADMIN)),

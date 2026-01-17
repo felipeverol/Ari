@@ -6,7 +6,7 @@ from dependencies.permissions import require_role
 
 router = APIRouter(tags=["profile"])
 
-@router.post("/profile")
+@router.post("/create-profile")
 def setup_profile(
     data: CreateProfileRequest,
     _ = Depends(require_role(ProfileRole.ADMIN))
