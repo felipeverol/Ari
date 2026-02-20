@@ -3,6 +3,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 from ai.graph.nodes import (
     generate_query_or_respond,
+    rerank_documents,
     rewrite_question,
     generate_answer,
 )
@@ -15,6 +16,7 @@ def build_graph():
 
     # Nodes
     workflow.add_node(generate_query_or_respond)
+    workflow.add_node(rerank_documents)
     workflow.add_node(
         "retrieval_tools",
         ToolNode([retrieve]),
@@ -35,9 +37,12 @@ def build_graph():
         },
     )
 
-    # Avalia documentos após retrieval (single ou multi)
+    # Após retrieval → rerank
+    workflow.add_edge("retrieval_tools", "rerank_documents")
+
+    # Após rerank → grade
     workflow.add_conditional_edges(
-        "retrieval_tools",
+        "rerank_documents",
         grade_documents,
     )
 

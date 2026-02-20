@@ -46,7 +46,7 @@ def retrieve(
                 metadata={
                     **(row.get("metadata") or {}),
                     "similarity": row["similarity"],
-                    "query": query,  # 🔥 útil em multi-hop
+                    "query": query,
                 },
             )
             for row in rows
