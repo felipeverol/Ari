@@ -5,7 +5,7 @@ from ai.prompts.rewrite import REWRITE_PROMPT
 from ai.prompts.generate import GENERATE_PROMPT
 
 def generate_query_or_respond(state):
-    response = gemini_25_flash.bind_tools([retrieve]).invoke(state["messages"])
+    response = gemini_25_flash.bind_tools([retrieve]).invoke([state["messages"][-1]])
     return {"messages": [response]}
 
 def rerank_documents(state):
@@ -36,9 +36,15 @@ def rerank_documents(state):
 
 def rewrite_question(state):
     question = state["messages"][0].content
+    rewrite_count = state["rewrite_count"]
+    
     prompt = REWRITE_PROMPT.format(question=question)
     response = gemini_25_flash.invoke([{"role": "user", "content": prompt}])
-    return {"messages": [HumanMessage(content=response.content)]}
+    
+    return {
+        "messages": [HumanMessage(content=response.content)],
+        "rewrite_count": rewrite_count + 1
+    }
 
 def generate_answer(state):
     question = state["messages"][0].content

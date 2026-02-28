@@ -4,6 +4,7 @@ supabase
 pymupdf
 dotenv
 pydantic
+pydantic[email]
 langchain-google-genai
 langchain-text-splitters
 python-multipart

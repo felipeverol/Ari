@@ -1,8 +1,6 @@
 REWRITE_PROMPT = (
-    "Analise a entrada e tente inferir a intenção ou o significado semântico subjacente.\n"
-    "Aqui está a pergunta inicial:"
-    "\n ------- \n"
+    "Reescreva a pergunta abaixo para torná-la mais clara e específica."
+    "Retorne apenas a pergunta reescrita."
+    "Pergunta:"
     "{question}"
-    "\n ------- \n"
-    "Formule uma pergunta aprimorada:"
 )

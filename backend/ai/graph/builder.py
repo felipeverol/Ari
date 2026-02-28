@@ -9,10 +9,10 @@ from ai.graph.nodes import (
 )
 from ai.graph.conditions import grade_documents
 from ai.tools.retriever import retrieve
-
+from ai.schemas.state import CustomState
 
 def build_graph():
-    workflow = StateGraph(MessagesState)
+    workflow = StateGraph(CustomState)
 
     # Nodes
     workflow.add_node(generate_query_or_respond)
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     graph = build_graph()
     png_bytes = graph.get_graph().draw_mermaid_png()
 
-    with open("graph.png", "wb") as f:
+    with open("ai/graph/graph.png", "wb") as f:
         f.write(png_bytes)
 
     print("✅ Grafo salvo em graph.png")

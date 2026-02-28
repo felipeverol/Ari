@@ -13,7 +13,10 @@ class ChatService:
         }
         
         result = ChatService.graph.invoke(
-            {"messages": [{"role": "user", "content": query}]},
+            {
+                "messages": [{"role": "user", "content": query}],
+                "rewrite_count": 0
+            },
             config=config
         )
 

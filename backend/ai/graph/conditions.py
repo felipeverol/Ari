@@ -6,6 +6,7 @@ from ai.schemas.grading import GradeDocuments
 def grade_documents(state) -> Literal["generate_answer", "rewrite_question"]:
     question = state["messages"][0].content
     context = state["messages"][-1].content
+    rewrite_count = state["rewrite_count"]
 
     prompt = GRADE_PROMPT.format(question=question, context=context)
     response = gemini_25_flash.with_structured_output(GradeDocuments).invoke(
@@ -13,7 +14,7 @@ def grade_documents(state) -> Literal["generate_answer", "rewrite_question"]:
     )
 
     return (
-        "generate_answer"
-        if response.binary_grade == "yes"
-        else "rewrite_question"
+        "rewrite_question"
+        if response.binary_grade == "no" and rewrite_count < 1
+        else "generate_answer"
     )
