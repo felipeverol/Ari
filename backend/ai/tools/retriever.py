@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
 from langchain_core.documents import Document
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 from langchain_core.tools import InjectedToolArg
 from langchain_core.runnables.config import RunnableConfig
 
@@ -44,30 +44,46 @@ def apply_rrf(documents: List[Document], k=60):
 @tool(response_format="content_and_artifact")
 def retrieve(
     queries: List[str],
-    config: Annotated[RunnableConfig, InjectedToolArg],
+    page: Optional[int] = None,
+    config: Annotated[RunnableConfig, InjectedToolArg] = None
 ):
     """
-    Use this tool to retrieve relevant documents from the class materials.
-    Provide one query for simple questions.
-    Provide multiple queries when the question involves multiple concepts,
-    entities, or aspects that should be searched separately.
+    Use esta ferramenta para recuperar documentos relevantes dos materiais da disciplina.
+
+    Argumentos:
+
+    - queries: Lista de consultas de busca.
+    Forneça uma única query para perguntas simples.
+    Forneça múltiplas queries quando a pergunta envolver múltiplos conceitos,
+    entidades ou aspectos que devem ser buscados separadamente.
+
+    - page (opcional): Número da página onde a informação provavelmente se encontra.
+    Use este argumento apenas quando o usuário mencionar explicitamente
+    uma página.
+
+    Se o usuário não mencionar nenhuma página, deixe este argumento vazio.
+    A ferramenta ignora o filtro de página caso ele não seja informado.
     """
-    
+
     all_docs_from_all_queries: List[Document] = []
 
     class_id = config.get("configurable", {}).get("class_id")
     if not class_id:
         raise ValueError("class_id não fornecido no config")
+    
+    filter_payload = {"class_id": class_id}
+    if page is not None:
+        filter_payload["page"] = page
 
     for query in queries:
         query_embedding = gemini_embedding_model.embed_query(query)
 
-        embeddings_response = supabase.rpc(
+        embeddings_response = supabase.rpc( # TODO: melhorar desempenho de busca vetorial pela criação de INDEX
             "match_material_chunk_embeddings",
             {
                 "content": query,
                 "query_embedding": query_embedding,
-                "filter": {"class_id": class_id},
+                "filter": filter_payload,
                 "match_count": 20 
             }
         ).execute()
@@ -77,7 +93,7 @@ def retrieve(
             {
                 "content": query,
                 "query_embedding": query_embedding,
-                "filter": {"class_id": class_id},
+                "filter": filter_payload,
                 "match_count": 20 
             }
         ).execute()
@@ -97,7 +113,7 @@ def retrieve(
                 )
             )
 
-    # Aplica o RRF uma única vez em TUDO o que foi encontrado
+    # Aplica o RRF em TUDO o que foi encontrado
     final_selection = apply_rrf(all_docs_from_all_queries)
     
     serialized = "\n\n---\n\n".join(
