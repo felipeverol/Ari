@@ -12,3 +12,6 @@ langchain
 langgraph
 langchain-community
 langchain-cohere
+langgraph-checkpoint-postgres 
+psycopg[binary] 
+psycopg-pool

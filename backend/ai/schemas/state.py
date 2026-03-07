@@ -1,4 +1,5 @@
 from langgraph.graph import MessagesState
 
 class CustomState(MessagesState):
-    rewrite_count: int
+    contextualized_question: str
+    retrieved_context: str

@@ -7,40 +7,6 @@ from langchain_core.runnables.config import RunnableConfig
 from supabase_client import supabase
 from ai.models.models import gemini_embedding_model
 
-def apply_rrf(documents: List[Document], k=60):
-    # Usamos o conteúdo como chave única para desduplicação
-    doc_scores = {}
-    content_to_doc = {}
-
-    # 1. Ranking por Similaridade (Vetor)
-    docs_by_similarity = sorted(documents, key=lambda d: d.metadata.get("similarity", 0), reverse=True)
-    for rank, doc in enumerate(docs_by_similarity, 1):
-        content = doc.page_content
-        doc_scores[content] = doc_scores.get(content, 0) + (1.0 / (k + rank))
-        content_to_doc[content] = doc
-
-    # 2. Ranking por Sparse Score (Texto)
-    docs_by_fts = [d for d in documents if (d.metadata.get("sparse_score") or 0) > 0.01]
-    docs_by_fts = sorted(docs_by_fts, key=lambda d: d.metadata.get("sparse_score", 0), reverse=True)
-    
-    for rank, doc in enumerate(docs_by_fts, 1):
-        content = doc.page_content
-        doc_scores[content] = doc_scores.get(content, 0) + (1.0 / (k + rank))
-        # O doc_map garante que preservamos o objeto Document original
-        if content not in content_to_doc:
-            content_to_doc[content] = doc
-
-    # 3. Gerar lista final ordenada pelo novo Hybrid Score
-    final_docs = []
-    sorted_items = sorted(doc_scores.items(), key=lambda x: x[1], reverse=True)
-    
-    for content, score in sorted_items:
-        doc = content_to_doc[content]
-        doc.metadata["hybrid_score"] = score
-        final_docs.append(doc)
-        
-    return final_docs
-
 @tool(response_format="content_and_artifact")
 def retrieve(
     queries: List[str],
@@ -122,3 +88,37 @@ def retrieve(
     )
 
     return serialized, final_selection
+
+def apply_rrf(documents: List[Document], k=60):
+    # Usamos o conteúdo como chave única para desduplicação
+    doc_scores = {}
+    content_to_doc = {}
+
+    # 1. Ranking por Similaridade (Vetor)
+    docs_by_similarity = sorted(documents, key=lambda d: d.metadata.get("similarity", 0), reverse=True)
+    for rank, doc in enumerate(docs_by_similarity, 1):
+        content = doc.page_content
+        doc_scores[content] = doc_scores.get(content, 0) + (1.0 / (k + rank))
+        content_to_doc[content] = doc
+
+    # 2. Ranking por Sparse Score (Texto)
+    docs_by_fts = [d for d in documents if (d.metadata.get("sparse_score") or 0) > 0.01]
+    docs_by_fts = sorted(docs_by_fts, key=lambda d: d.metadata.get("sparse_score", 0), reverse=True)
+    
+    for rank, doc in enumerate(docs_by_fts, 1):
+        content = doc.page_content
+        doc_scores[content] = doc_scores.get(content, 0) + (1.0 / (k + rank))
+        # O doc_map garante que preservamos o objeto Document original
+        if content not in content_to_doc:
+            content_to_doc[content] = doc
+
+    # 3. Gerar lista final ordenada pelo novo Hybrid Score
+    final_docs = []
+    sorted_items = sorted(doc_scores.items(), key=lambda x: x[1], reverse=True)
+    
+    for content, score in sorted_items:
+        doc = content_to_doc[content]
+        doc.metadata["hybrid_score"] = score
+        final_docs.append(doc)
+        
+    return final_docs
