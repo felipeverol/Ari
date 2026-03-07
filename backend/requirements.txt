@@ -4,9 +4,14 @@ supabase
 pymupdf
 dotenv
 pydantic
+pydantic[email]
 langchain-google-genai
 langchain-text-splitters
 python-multipart
 langchain
 langgraph
 langchain-community
+langchain-cohere
+langgraph-checkpoint-postgres 
+psycopg[binary] 
+psycopg-pool
