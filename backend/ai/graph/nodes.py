@@ -38,7 +38,7 @@ def rerank_documents(state):
         m for m in reversed(messages) if hasattr(m, "tool_calls") and m.tool_calls
     )
     queries = tool_call_msg.tool_calls[0]["args"]["queries"]
-    question = queries[0] if len(queries) == 1 else " e ".join(queries)
+    question = queries[0] if len(queries) == 1 else "; ".join(queries)
 
     documents = messages[-1].artifact
 
