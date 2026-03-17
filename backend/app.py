@@ -6,6 +6,7 @@ from routes.school_routes import router as school_router
 from routes.class_routes import router as class_router
 from routes.profile_routes import router as profile_router
 from routes.chat_routes import router as chat_router
+from routes.user_routes import router as user_router
 from supabase_client import pool, checkpointer
 from dotenv import load_dotenv
 
@@ -25,4 +26,5 @@ app.include_router(material_router, prefix="/materials")
 app.include_router(school_router, prefix="/school")
 app.include_router(class_router, prefix="/class")
 app.include_router(profile_router, prefix="/profile")
-app.include_router(chat_router)
+app.include_router(user_router, prefix="/user")
+app.include_router(chat_router, prefix="/chat")
