@@ -1,5 +1,5 @@
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
-from ai.models.models import gemini_25_flash, reranker
+from ai.models.models import gemini_25_flash, gemini_25_flash_lite, reranker
 from ai.tools.retriever import retrieve
 from ai.prompts.generate import GENERATE_PROMPT
 from ai.prompts.system import SYSTEM_PROMPT
@@ -24,7 +24,7 @@ def generate_query_or_respond(state):
     """Decide se responde diretamente ou chama a tool de retrieval."""
     system = SystemMessage(content=SYSTEM_PROMPT)
     history = clean_history(state["messages"], N_MESSAGES)
-    response = gemini_25_flash.bind_tools([retrieve]).invoke(
+    response = gemini_25_flash_lite.bind_tools([retrieve]).invoke(
         [system] + history
     )
     return {"messages": [response]}

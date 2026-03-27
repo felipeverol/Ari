@@ -6,7 +6,7 @@ from models.chat_models import ChatRequest
 
 router = APIRouter(tags=["chat"])
 
-@router.post("/chat")
+@router.post("/")
 async def chat(
     query: str = Form(...),
     class_id: str = Form(...),

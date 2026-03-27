@@ -38,8 +38,7 @@ class AuthService:
                 raise Exception("Credenciais inválidas")
 
             return {
-                "session": response.session,
-                "user": response.user
+                "access_token": response.session.access_token
             }
 
         except Exception as e:
