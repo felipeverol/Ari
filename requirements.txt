@@ -15,3 +15,5 @@ langchain-cohere
 langgraph-checkpoint-postgres 
 psycopg[binary] 
 psycopg-pool
+Pillow
+google-genai
