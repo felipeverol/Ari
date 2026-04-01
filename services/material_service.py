@@ -17,6 +17,7 @@ CHUNK_OVERLAP = 150
 MIN_IMAGE_SIZE_BYTES = 5000
 CONTEXT_CHARS = 300
 
+client = genai.Client()
 
 class MaterialService:
 
@@ -197,7 +198,6 @@ class MaterialService:
 
     @staticmethod
     def embed_image_chunk(chunk: dict) -> list[float]:
-        client = genai.Client()
         
         result = client.models.embed_content(
             model="gemini-embedding-2-preview",
@@ -225,7 +225,7 @@ class MaterialService:
             file=image_bytes,
             file_options={"content-type": "image/png"}
         )
-        return supabase.storage.from_("materials").get_public_url(image_path)
+        return image_path
 
     @staticmethod
     async def store_embeddings(chunks: list[dict], material_id: str, school_id: str, class_id: str):
@@ -245,16 +245,13 @@ class MaterialService:
                     "metadata": {"page": chunk["page"], "type": "text"}
                 })
 
-        contador = 0
         for chunk in image_chunks:
-            contador += 1
-            image_url = MaterialService.upload_image_to_storage(
+            image_path = MaterialService.upload_image_to_storage(
                 image_bytes=chunk["image_bytes"],
                 school_id=school_id,
                 class_id=class_id,
                 material_id=material_id
             )
-            print(f"{contador} imagem processada")
             embedding = MaterialService.embed_image_chunk(chunk)
             rows.append({
                 "material_id": material_id,
@@ -263,7 +260,8 @@ class MaterialService:
                 "metadata": {
                     "page": chunk["page"],
                     "type": "image",
-                    "image_url": image_url
+                    "image_path": image_path,
+                    "image_index": chunk['image_index']
                 }
             })
 
