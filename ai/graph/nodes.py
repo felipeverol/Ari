@@ -45,7 +45,7 @@ def rerank_documents(state):
         query=question,
         documents=[{"text": doc.page_content, **doc.metadata} for doc in documents],
         rank_fields=["text"],
-        top_n=3,
+        top_n=5,
     )
 
     top_docs = [documents[r["index"]] for r in results]
