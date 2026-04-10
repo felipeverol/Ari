@@ -7,14 +7,16 @@ class ProfileService:
     @staticmethod
     def create_profile(
         user_id: str,
+        email: str,
         name: str,
         role: ProfileRole,
-        class_ids: List[str]
+        class_ids: List[str],
     ):
         supabase.table("profile").insert({
             "id": user_id,
             "name": name,
-            "role": role.value
+            "role": role.value,
+            "email" : email
         }).execute()
 
         if class_ids:

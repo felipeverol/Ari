@@ -1,8 +1,7 @@
 from fastapi import APIRouter, UploadFile, Depends, Form
 from models.material_models import UploadMaterialRequest
 from controllers.material_controller import MaterialController
-from dependencies.permissions import require_teacher_in_class, require_role
-from models.profile_models import ProfileRole
+from dependencies.permissions import require_teacher_in_class
 
 router = APIRouter(tags=["materials"])
 
