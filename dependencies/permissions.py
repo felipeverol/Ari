@@ -28,6 +28,9 @@ def require_role(required_role: ProfileRole):
         
         current_role = get_user_role(user.id)
 
+        if current_role == ProfileRole.ADMIN:
+            return user
+
         if current_role != required_role:
             raise HTTPException(
                 status_code=403, 
