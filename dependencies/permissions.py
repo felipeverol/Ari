@@ -44,6 +44,11 @@ def require_teacher_in_class(
     class_id: str = Form(...),
     user = Depends(require_role(ProfileRole.TEACHER)),
 ):
+    current_role = get_user_role(user.id)
+    
+    if current_role == ProfileRole.ADMIN:
+        return user
+    
     result = (
         supabase
         .table("teacher_class")
@@ -65,6 +70,11 @@ def require_student_in_class(
     class_id: str = Form(...),
     user = Depends(require_role(ProfileRole.STUDENT)),
 ):
+    current_role = get_user_role(user.id)
+    
+    if current_role == ProfileRole.ADMIN:
+        return user
+    
     result = (
         supabase
         .table("student_class")

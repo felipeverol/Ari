@@ -1,15 +1,18 @@
 from fastapi import HTTPException
 from services.auth_service import AuthService
-from models.auth_models import AuthRequest
+from models.auth_models import SignupRequest, LoginRequest
 
 class AuthController:
     
     @staticmethod
-    def signup(data: AuthRequest):
+    def signup(data: SignupRequest):
         try:
             return AuthService.signup(
                 email=data.email,
-                password=data.password
+                password=data.password,
+                name=data.name,
+                role=data.role,
+                class_ids=data.class_ids
             )
         except Exception as e:
             raise HTTPException(
@@ -18,7 +21,7 @@ class AuthController:
             )
 
     @staticmethod
-    def login(data: AuthRequest):
+    def login(data: LoginRequest):
         try:
             return AuthService.login(
                 email=data.email,
